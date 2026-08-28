@@ -25,12 +25,14 @@ body {
 
 @font-face {
   font-family: 'NotoNastaliq';
-  src: url('/fonts/NotoNastaliqUrdu-Regular.ttf') format('truetype');
+  src: url('/fonts/NotoNastaliqUrduDraft.woff') format('woff'),
+       url('/fonts/NotoNastaliqUrduDraft.ttf') format('truetype');
   font-weight: normal;
+  font-display: swap;
 }
 
 .urdu {
-  font-family: 'NotoNastaliq', 'Nafees Nastaleeq', serif;
+  font-family: 'NotoNastaliq', 'Nafees Nastaleeq', 'Jameel Noori Nastaleeq', serif;
   direction: rtl;
   text-align: right;
   line-height: 2.2;
