@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Poetry {
+  id          Int      @id @default(autoincrement())
+  poet        String   @db.VarChar(255)
+  title       String   @db.VarChar(255)
+  type        Int      @default(0)
+  meterID     String?  @db.Text
+  text        String   @db.LongText
+  taqtiObject String?  @db.LongText
+  searchString String? @db.Text
+
+  @@map("poetry")
+}
+
+model MyPoetry {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  url       String?  @db.VarChar(255)
+  title     String   @db.VarChar(255)
+  text      String   @db.LongText
+  mozun     Int      @default(0)
+  publish   Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("mypoetry")
+}
+
+model Mastertable {
+  id       Int     @id @default(autoincrement())
+  word     String  @db.VarChar(255)
+  muarrab  String  @db.VarChar(255)
+  taqti    String  @db.VarChar(255)
+  language String? @db.VarChar(100)
+  isVaried Boolean @default(false)
+
+  @@map("mastertable")
+}
+
+model Exceptions {
+  id    Int     @id @default(autoincrement())
+  word  String  @db.VarChar(255)
+  code  String  @db.VarChar(50)
+  code2 String? @db.VarChar(50)
+  code3 String? @db.VarChar(50)
+
+  @@map("exceptions")
+}
+
+model Variations {
+  id      Int    @id @default(autoincrement())
+  word    String @db.VarChar(255)
+  muarrab String @db.VarChar(255)
+  taqti   String @db.VarChar(255)
+  masterId Int?
+
+  @@map("variations")
+}
+
+model Plurals {
+  id      Int    @id @default(autoincrement())
+  word    String @db.VarChar(255)
+  muarrab String @db.VarChar(255)
+  taqti   String @db.VarChar(255)
+
+  @@map("Plurals")
+}
+
+model Unassigned {
+  id   Int    @id @default(autoincrement())
+  word String @db.VarChar(255)
+
+  @@map("unassigned")
+}
+
+model InputData {
+  id        Int      @id @default(autoincrement())
+  input     String   @db.Text
+  ip        String?  @db.VarChar(50)
+  createdAt DateTime @default(now())
+
+  @@map("InputData")
+}
+
+model IpLog {
+  id        Int      @id @default(autoincrement())
+  ip        String   @db.VarChar(50)
+  url       String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+
+  @@map("iplog")
+}
+
+model BlackList {
+  id  Int    @id @default(autoincrement())
+  ip  String @unique @db.VarChar(50)
+
+  @@map("blackList")
+}
+
+model Report {
+  id       Int     @id @default(autoincrement())
+  inputID  String? @db.VarChar(100)
+  name     String? @db.VarChar(255)
+  email    String? @db.VarChar(255)
+  comments String? @db.Text
+
+  @@map("report")
+}
+
+model LikeDislike {
+  id     Int    @id @default(autoincrement())
+  url    String @db.VarChar(255)
+  action Int    @default(0)
+
+  @@map("likeDislike")
+}
+
+model Info {
+  id    Int    @id @default(autoincrement())
+  title String @db.VarChar(255)
+  body  String @db.Text
+
+  @@map("Info")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  password      String?
+  role          String    @default("user")
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
