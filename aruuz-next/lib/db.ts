@@ -3,7 +3,7 @@ import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 
 declare global {
   // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
+  var _prisma: PrismaClient | undefined;
 }
 
 function createPrismaClient(): PrismaClient {
@@ -14,8 +14,16 @@ function createPrismaClient(): PrismaClient {
   });
 }
 
-export const prisma: PrismaClient = globalThis.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.prisma = prisma;
+function getClient(): PrismaClient {
+  if (!globalThis._prisma) {
+    globalThis._prisma = createPrismaClient();
+  }
+  return globalThis._prisma;
 }
+
+// Lazy proxy: defers actual client creation until first property access (inside a request handler)
+export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_, prop: string | symbol) {
+    return (getClient() as unknown as Record<string | symbol, unknown>)[prop];
+  },
+});
